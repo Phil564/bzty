@@ -289,36 +289,40 @@ public class SFSUtil
 				sfsobject3_1.PutInt("fubenId", param.GetInt("fubenId")); // id of the Campaign Level
 				sfsobject3_1.PutInt("dieNum", param.GetInt("dieNum")); // number of times the player died in the Campaign Level
 				sfsobject3_1.PutInt("passTime", param.GetInt("passTime")); // time ever since the start of the Campaign Level
-				string[] stars = {"1", "2", "3"};
-				foreach (string s in stars)
+				int[] istars = {0, 1, 2};
+				string[] stars = {"star1", "star2", "star3"};
+				string[] starsget = {"star1get", "star2get", "star3get"};
+				int[] starconditions = {map.GetStarCondition01, map.GetStarCondition02, map.GetStarCondition03};
+				int[] starssaveddata = {characterFubenByMapId.Star1, characterFubenByMapId.Star2, characterFubenByMapId.Star3};
+				foreach (int s in istars)
 				{
-/*NEEDS A FIX*/		RaidStarCondition raidStarCondition = GameCache.RaidStar[map["GetStarCondition0" + s]];
+					RaidStarCondition raidStarCondition = GameCache.RaidStar[starconditions[s]];
 					if ((raidStarCondition.ConditionType == 1 && param.GetInt("dieNum") < 1)
 						|| raidStarCondition.ConditionType == 2
 						|| (raidStarCondition.ConditionType == 3 && (param.GetInt("goldNum") > raidStarCondition.Parameter01 || param.GetInt("goldNum") == raidStarCondition.Parameter01))
 						|| (raidStarCondition.ConditionType == 4 && param.GetInt("passTime") < raidStarCondition.Parameter01))
 					{
-						sfsobject3_1.PutInt(("star" + s), 1);
+						sfsobject3_1.PutInt(stars[s], 1);
 						starnum++;
 					}
 					else
 					{
-						sfsobject3_1.PutInt(("star" + s), 0);
+						sfsobject3_1.PutInt(stars[s], 0);
 					}
 					if (characterFubenByMapId != null)
 					{
-/*NEEDS A FIX*/			if (characterFubenByMapId["Star" + s] = 1)
+						if (starssaveddata[s] == 1)
 						{
-							sfsobject3_1.PutInt(("star" + s + "get"), 1);
+							sfsobject3_1.PutInt(starsget[s], 1);
 						}
 						else
 						{
-							sfsobject3_1.PutInt(("star" + s + "get"), 0);
+							sfsobject3_1.PutInt(starsget[s], 0);
 						}	
 					}
 					else
 					{
-						sfsobject3_1.PutInt(("star" + s + "get"), 0);
+						sfsobject3_1.PutInt(starsget[s], 0);
 					}	
 				}
 				CharacterFuben characterFuben = new CharacterFuben();
