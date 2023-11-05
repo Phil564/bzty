@@ -3,6 +3,7 @@ using GameClient.Entities;
 using Sfs2X.Core;
 using Sfs2X.Entities.Data;
 using UnityEngine;
+using System.IO;
 
 // Token: 0x0200019A RID: 410
 public class SFSUtil
@@ -35,98 +36,100 @@ public class SFSUtil
 		switch (cmd) 
 		{
 			case "CreateCharacter": // called by CreateCharacter, to well, create a character.
-				Hero hero;
-				if (param.GetInt("sex") == 1)
+				PlayerPrefs.SetInt("CCharacterID",1);
+				PlayerPrefs.SetInt("CGameUserID",1);
+				PlayerPrefs.SetInt("CSex", param.GetInt("sex"));
+				PlayerPrefs.SetInt("CCharacterColor", param.GetInt("characterColor"));
+				PlayerPrefs.SetInt("CEyesColor", param.GetInt("eyseColor"));
+				PlayerPrefs.SetInt("CHiddenPoints", 0);
+				PlayerPrefs.SetInt("CGrade", 1);
+				PlayerPrefs.SetInt("CStep", 1);
+				PlayerPrefs.SetInt("CExp", 0);
+				PlayerPrefs.SetInt("CUpExp", 20);
+				PlayerPrefs.SetInt("CStepExp", 0);
+				PlayerPrefs.SetInt("CUpStep", 500);
+				PlayerPrefs.SetInt("CMoney", 10000);
+				PlayerPrefs.SetInt("CGameGold", 10000);
+				PlayerPrefs.SetInt("CCharacterCreated", 1);
+				PlayerPrefs.Save();
+				ISFSObject isfsobjCC_cha = new SFSObject();
+				isfsobjCC_cha.PutInt("ID", PlayerPrefs.GetInt("CCharacterID")); // Character Id, temporary
+				isfsobjCC_cha.PutInt("GameUserID", PlayerPrefs.GetInt("CGameUserID")); // User Id, temporary
+				isfsobjCC_cha.PutInt("Sex", PlayerPrefs.GetInt("CSex")); // Character Sex/Gender
+				isfsobjCC_cha.PutInt("CharacterColor", PlayerPrefs.GetInt("CCharacterColor")); // Character Skin Color
+				isfsobjCC_cha.PutInt("EyesColor", PlayerPrefs.GetInt("CEyesColor")); // Character Eyes Color
+				isfsobjCC_cha.PutInt("HiddenPoints", PlayerPrefs.GetInt("CHiddenPoints")); // Unknown
+				isfsobjCC_cha.PutInt("Grade", PlayerPrefs.GetInt("CGrade")); // Level
+				isfsobjCC_cha.PutInt("Step", PlayerPrefs.GetInt("CStep")); // Rank
+				isfsobjCC_cha.PutInt("Exp", PlayerPrefs.GetInt("CExp")); // Level Exp
+				isfsobjCC_cha.PutInt("UpExp", PlayerPrefs.GetInt("CUpExp")); // Level Exp needed for the next level
+				isfsobjCC_cha.PutInt("StepExp", PlayerPrefs.GetInt("CStepExp")); // Rank Exp
+				isfsobjCC_cha.PutInt("UpStep", PlayerPrefs.GetInt("CUpStep")); // Rank Exp needed for the next level
+				isfsobjCC_cha.PutInt("Money", PlayerPrefs.GetInt("CMoney")); // Gems
+				isfsobjCC_cha.PutInt("GameGold", PlayerPrefs.GetInt("CGameGold")); // Coins/Gold
+				Hero heroCC;
+				if (PlayerPrefs.GetInt("CSex") == 1)
 				{
-					hero = GameCache.HeroDatas[101];
+					heroCC = GameCache.HeroDatas[101];
 				}
 				else
 				{
-					hero = GameCache.HeroDatas[102];
+					heroCC = GameCache.HeroDatas[102];
 				}
-				ISFSObject isfsobject = new SFSObject();
-				PlayerPrefs.SetInt("CCharacterID",1);
-				isfsobject.PutInt("ID", PlayerPrefs.GetInt("CCharacterID")); // Character Id, temporary
-				PlayerPrefs.SetInt("CGameUserID",1);
-				isfsobject.PutInt("GameUserID", PlayerPrefs.GetInt("CGameUserID")); // User Id, temporary
-				PlayerPrefs.SetInt("CSex", param.GetInt("sex"));
-				isfsobject.PutInt("Sex", PlayerPrefs.GetInt("CSex")); // Character Sex/Gender
-				PlayerPrefs.SetInt("CCharacterColor", param.GetInt("characterColor"));
-				isfsobject.PutInt("CharacterColor", PlayerPrefs.GetInt("CCharacterColor")); // Character Skin Color
-				PlayerPrefs.SetInt("CEyesColor", param.GetInt("eyseColor"));
-				isfsobject.PutInt("EyesColor", PlayerPrefs.GetInt("CEyesColor")); // Character Eyes Color
-				PlayerPrefs.SetInt("CHiddenPoints", 0);
-				isfsobject.PutInt("HiddenPoints", PlayerPrefs.GetInt("CHiddenPoints")); // Unknown
-				PlayerPrefs.SetInt("CGrade", 1);
-				isfsobject.PutInt("Grade", PlayerPrefs.GetInt("CGrade")); // Level
-				PlayerPrefs.SetInt("CStep", 1);
-				isfsobject.PutInt("Step", PlayerPrefs.GetInt("CStep")); // Rank
-				PlayerPrefs.SetInt("CExp", 0);
-				isfsobject.PutInt("Exp", PlayerPrefs.GetInt("CExp")); // Level Exp
-				PlayerPrefs.SetInt("CUpExp", 20);
-				isfsobject.PutInt("UpExp", PlayerPrefs.GetInt("CUpExp")); // Level Exp needed for the next level
-				PlayerPrefs.SetInt("CStepExp", 0);
-				isfsobject.PutInt("StepExp", PlayerPrefs.GetInt("CStepExp")); // Rank Exp
-				PlayerPrefs.SetInt("CUpStep", 500);
-				isfsobject.PutInt("UpStep", PlayerPrefs.GetInt("CUpStep")); // Rank Exp needed for the next level
-				PlayerPrefs.SetInt("CMoney", 10000);
-				isfsobject.PutInt("Money", PlayerPrefs.GetInt("CMoney")); // Gems
-				PlayerPrefs.SetInt("CGameGold", 10000);
-				isfsobject.PutInt("GameGold", PlayerPrefs.GetInt("CGameGold")); // Coins/Gold
-				ISFSArray isfsarray = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
-				ISFSObject isfsobject2 = new SFSObject();
-				isfsobject2.PutInt("ID", hero.WeaponId);
-				isfsobject2.PutInt("CharacterID", 1);
-				isfsobject2.PutInt("EquipID", hero.WeaponId);
-				isfsobject2.PutInt("Type", 1);
-				isfsarray.AddSFSObject(isfsobject2);
-				ISFSObject isfsobject3 = new SFSObject();
-				isfsobject3.PutInt("ID", hero.ClothId);
-				isfsobject3.PutInt("CharacterID", 1);
-				isfsobject3.PutInt("EquipID", hero.ClothId);
-				isfsobject3.PutInt("Type", 3);
-				isfsarray.AddSFSObject(isfsobject3);
-				ISFSObject isfsobject4 = new SFSObject();
-				isfsobject4.PutInt("ID", hero.ShoesId);
-				isfsobject4.PutInt("CharacterID", 1);
-				isfsobject4.PutInt("EquipID", hero.ShoesId);
-				isfsobject4.PutInt("Type", 4);
-				isfsarray.AddSFSObject(isfsobject4);
-				ISFSObject isfsobject5 = new SFSObject();
-				isfsobject5.PutInt("ID", hero.TireId);
-				isfsobject5.PutInt("CharacterID", 1);
-				isfsobject5.PutInt("EquipID", hero.TireId);
-				isfsobject5.PutInt("Type", 2);
-				isfsarray.AddSFSObject(isfsobject5);
-				isfsobject.PutSFSArray("CharacterEquip", isfsarray);
-				ISFSArray isfsarray2 = new SFSArray();
-				isfsobject.PutSFSArray("CharacterFuben", isfsarray2);
-				ISFSObject isfsobject6 = new SFSObject();
-				isfsobject6.PutInt("ID", PlayerPrefs.GetInt("CGameUserID"));
-				SFSObject sfsobject = new SFSObject();
-				((ISFSObject)sfsobject).PutSFSObject("cha", isfsobject);
-				((ISFSObject)sfsobject).PutSFSObject("gu", isfsobject6);
-				PlayerPrefs.SetInt("CCharacterCreated", 1);
-				PlayerPrefs.Save();
-				callback(true, sfsobject);
+				ISFSArray isfsarrCC_CE = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
+				ISFSObject isfsobjCC_Weapon = new SFSObject();
+				isfsobjCC_Weapon.PutInt("ID", heroCC.WeaponId);
+				isfsobjCC_Weapon.PutInt("CharacterID", 1);
+				isfsobjCC_Weapon.PutInt("EquipID", heroCC.WeaponId);
+				isfsobjCC_Weapon.PutInt("Type", 1);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_Weapon);
+				ISFSObject isfsobjCC_Cloth = new SFSObject();
+				isfsobjCC_Cloth.PutInt("ID", heroCC.ClothId);
+				isfsobjCC_Cloth.PutInt("CharacterID", 1);
+				isfsobjCC_Cloth.PutInt("EquipID", heroCC.ClothId);
+				isfsobjCC_Cloth.PutInt("Type", 3);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_Cloth);
+				ISFSObject isfsobjCC_Shoes = new SFSObject();
+				isfsobjCC_Shoes.PutInt("ID", heroCC.ShoesId);
+				isfsobjCC_Shoes.PutInt("CharacterID", 1);
+				isfsobjCC_Shoes.PutInt("EquipID", heroCC.ShoesId);
+				isfsobjCC_Shoes.PutInt("Type", 4);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_Shoes);
+				ISFSObject isfsobjCC_Tire = new SFSObject();
+				isfsobjCC_Tire.PutInt("ID", heroCC.TireId);
+				isfsobjCC_Tire.PutInt("CharacterID", 1);
+				isfsobjCC_Tire.PutInt("EquipID", heroCC.TireId);
+				isfsobjCC_Tire.PutInt("Type", 2);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_Tire);
+				isfsobjCC_cha.PutSFSArray("CharacterEquip", isfsarrCC_CE);
+				ISFSArray isfsarrCC_CF = new SFSArray(); // TEMPORARY!!!! story mode save data, doesn't save
+				isfsobjCC_cha.PutSFSArray("CharacterFuben", isfsarrCC_CF);
+				ISFSObject isfsobjCC_gu = new SFSObject();
+				isfsobjCC_gu.PutInt("ID", PlayerPrefs.GetInt("CGameUserID"));
+				ISFSObject isfsobjCC_send = new SFSObject();
+				isfsobjCC_send.PutSFSObject("cha", isfsobjCC_cha);
+				isfsobjCC_send.PutSFSObject("gu", isfsobjCC_gu);
+				callback(true, isfsobjCC_send);
+				// string json = JsonUtility.ToJson(isfsobjCC_send,true);
+				// File.WriteAllText(Application.persistentDataPath + "playerdata.json", json);
 				break;
 			case "SetCharacterFunc": // this is kind of how the game normally saves shit
 				if (param.ContainsKey("func"))
 				{
-					GameCache.Character.Func = param.GetInt("func"); // setting the func
 					PlayerPrefs.SetInt("CFunc", param.GetInt("func")); // saving the func in case that the player leaves
+					PlayerPrefs.Save();
+					// GameCache.Character.Func = param.GetInt("func"); // setting the func
 				} 
-				PlayerPrefs.Save();
 				callback(true, null);
 				break;
 			case "SetCharacter": // called by ChangeNameUI, probably to change a part of the character without literally fucking it up.
 			{
 				if (param.ContainsKey("nm"))
 				{
-					GameCache.Character.Name = param.GetUtfString("nm"); // idk where it sets the name so uhhh i set it here
 					PlayerPrefs.SetString("CName", param.GetUtfString("nm")); // i also save the name
+					PlayerPrefs.Save();
+					GameCache.Character.Name = param.GetUtfString("nm"); // idk where it sets the name so uhhh i set it here
 				}
-				PlayerPrefs.Save();
 				callback(true, null);
 				break;
 			}
@@ -138,74 +141,74 @@ public class SFSUtil
 				//param.GetUtfString("sk");
 				if (PlayerPrefs.HasKey("CCharacterCreated"))
 				{
-					Hero hero2;
+					Hero heroSDKLG;
 					if (PlayerPrefs.GetInt("CSex") == 1)
 					{
-						hero2 = GameCache.HeroDatas[101];
+						heroSDKLG = GameCache.HeroDatas[101];
 					}
 					else
 					{
-						hero2 = GameCache.HeroDatas[102];
+						heroSDKLG = GameCache.HeroDatas[102];
 					}
-					ISFSObject isfsobject2_1 = new SFSObject();
-					isfsobject2_1.PutInt("ID", PlayerPrefs.GetInt("CCharacterID")); // Character Id, temporary
-					isfsobject2_1.PutUtfString("Name", PlayerPrefs.GetString("CName",string.Empty)); // Character Name
-					isfsobject2_1.PutInt("GameUserID", PlayerPrefs.GetInt("CGameUserID")); // User Id, temporary
-					isfsobject2_1.PutInt("Sex", PlayerPrefs.GetInt("CSex")); // Character Sex/Gender
-					isfsobject2_1.PutInt("CharacterColor", PlayerPrefs.GetInt("CCharacterColor")); // Character Skin Color
-					isfsobject2_1.PutInt("EyesColor", PlayerPrefs.GetInt("CEyesColor")); // Character Eyes Color
-					isfsobject2_1.PutInt("HiddenPoints", PlayerPrefs.GetInt("CHiddenPoints")); // Unknown
-					isfsobject2_1.PutInt("Grade", PlayerPrefs.GetInt("CGrade")); // Level
-					isfsobject2_1.PutInt("Step", PlayerPrefs.GetInt("CStep")); // Rank
-					isfsobject2_1.PutInt("Exp", PlayerPrefs.GetInt("CExp")); // Level Exp
-					isfsobject2_1.PutInt("UpExp", PlayerPrefs.GetInt("CUpExp")); // Level Exp needed for the next level
-					isfsobject2_1.PutInt("StepExp", PlayerPrefs.GetInt("CStepExp")); // Rank Exp
-					isfsobject2_1.PutInt("UpStep", PlayerPrefs.GetInt("CUpStep")); // Rank Exp needed for the next level
-					isfsobject2_1.PutInt("Money", PlayerPrefs.GetInt("CMoney")); // Gems
-					isfsobject2_1.PutInt("GameGold", PlayerPrefs.GetInt("CGameGold")); // Coins/Gold
+					ISFSObject isfsobjSDKLG_Ccha = new SFSObject();
+					isfsobjSDKLG_Ccha.PutInt("ID", PlayerPrefs.GetInt("CCharacterID")); // Character Id, temporary
+					isfsobjSDKLG_Ccha.PutUtfString("Name", PlayerPrefs.GetString("CName",string.Empty)); // Character Name
+					isfsobjSDKLG_Ccha.PutInt("GameUserID", PlayerPrefs.GetInt("CGameUserID")); // User Id, temporary
+					isfsobjSDKLG_Ccha.PutInt("Sex", PlayerPrefs.GetInt("CSex")); // Character Sex/Gender
+					isfsobjSDKLG_Ccha.PutInt("CharacterColor", PlayerPrefs.GetInt("CCharacterColor")); // Character Skin Color
+					isfsobjSDKLG_Ccha.PutInt("EyesColor", PlayerPrefs.GetInt("CEyesColor")); // Character Eyes Color
+					isfsobjSDKLG_Ccha.PutInt("HiddenPoints", PlayerPrefs.GetInt("CHiddenPoints")); // Unknown
+					isfsobjSDKLG_Ccha.PutInt("Grade", PlayerPrefs.GetInt("CGrade")); // Level
+					isfsobjSDKLG_Ccha.PutInt("Step", PlayerPrefs.GetInt("CStep")); // Rank
+					isfsobjSDKLG_Ccha.PutInt("Exp", PlayerPrefs.GetInt("CExp")); // Level Exp
+					isfsobjSDKLG_Ccha.PutInt("UpExp", PlayerPrefs.GetInt("CUpExp")); // Level Exp needed for the next level
+					isfsobjSDKLG_Ccha.PutInt("StepExp", PlayerPrefs.GetInt("CStepExp")); // Rank Exp
+					isfsobjSDKLG_Ccha.PutInt("UpStep", PlayerPrefs.GetInt("CUpStep")); // Rank Exp needed for the next level
+					isfsobjSDKLG_Ccha.PutInt("Money", PlayerPrefs.GetInt("CMoney")); // Gems
+					isfsobjSDKLG_Ccha.PutInt("GameGold", PlayerPrefs.GetInt("CGameGold")); // Coins/Gold
 					if (PlayerPrefs.HasKey("CFunc"))
 					{
-						isfsobject2_1.PutInt("Func", PlayerPrefs.GetInt("CFunc"));
+						isfsobjSDKLG_Ccha.PutInt("Func", PlayerPrefs.GetInt("CFunc"));
 					}
-					ISFSArray isfsarray2_1 = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
-					ISFSObject isfsobject2_2 = new SFSObject();
-					isfsobject2_2.PutInt("ID", hero2.WeaponId);
-					isfsobject2_2.PutInt("CharacterID", 1);
-					isfsobject2_2.PutInt("EquipID", hero2.WeaponId);
-					isfsobject2_2.PutInt("Type", 1);
-					isfsarray2_1.AddSFSObject(isfsobject2_2);
-					ISFSObject isfsobject2_3 = new SFSObject();
-					isfsobject2_3.PutInt("ID", hero2.ClothId);
-					isfsobject2_3.PutInt("CharacterID", 1);
-					isfsobject2_3.PutInt("EquipID", hero2.ClothId);
-					isfsobject2_3.PutInt("Type", 3);
-					isfsarray2_1.AddSFSObject(isfsobject2_3);
-					ISFSObject isfsobject2_4 = new SFSObject();
-					isfsobject2_4.PutInt("ID", hero2.ShoesId);
-					isfsobject2_4.PutInt("CharacterID", 1);
-					isfsobject2_4.PutInt("EquipID", hero2.ShoesId);
-					isfsobject2_4.PutInt("Type", 4);
-					isfsarray2_1.AddSFSObject(isfsobject2_4);
-					ISFSObject isfsobject2_5 = new SFSObject();
-					isfsobject2_5.PutInt("ID", hero2.TireId);
-					isfsobject2_5.PutInt("CharacterID", 1);
-					isfsobject2_5.PutInt("EquipID", hero2.TireId);
-					isfsobject2_5.PutInt("Type", 2);
-					isfsarray2_1.AddSFSObject(isfsobject2_5);
-					isfsobject2_1.PutSFSArray("CharacterEquip", isfsarray2_1);
-					ISFSArray isfsarray2_2 = new SFSArray();
-					isfsobject2_1.PutSFSArray("CharacterFuben", isfsarray2_2);
-					ISFSObject isfsobject2_6 = new SFSObject();
-					isfsobject2_6.PutInt("ID", PlayerPrefs.GetInt("CGameUserID"));
-					SFSObject sfsobject2_1 = new SFSObject();
-					((ISFSObject)sfsobject2_1).PutSFSObject("cha", isfsobject2_1);
-					((ISFSObject)sfsobject2_1).PutSFSObject("gu", isfsobject2_6);
-					callback(true, sfsobject2_1);
+					ISFSArray isfsarrSDKLG_CCE = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
+					ISFSObject isfsarrSDKLG_CWeapon = new SFSObject();
+					isfsarrSDKLG_CWeapon.PutInt("ID", heroSDKLG.WeaponId);
+					isfsarrSDKLG_CWeapon.PutInt("CharacterID", 1);
+					isfsarrSDKLG_CWeapon.PutInt("EquipID", heroSDKLG.WeaponId);
+					isfsarrSDKLG_CWeapon.PutInt("Type", 1);
+					isfsarrSDKLG_CCE.AddSFSObject(isfsarrSDKLG_CWeapon);
+					ISFSObject isfsarrSDKLG_CCloth = new SFSObject();
+					isfsarrSDKLG_CCloth.PutInt("ID", heroSDKLG.ClothId);
+					isfsarrSDKLG_CCloth.PutInt("CharacterID", 1);
+					isfsarrSDKLG_CCloth.PutInt("EquipID", heroSDKLG.ClothId);
+					isfsarrSDKLG_CCloth.PutInt("Type", 3);
+					isfsarrSDKLG_CCE.AddSFSObject(isfsarrSDKLG_CCloth);
+					ISFSObject isfsarrSDKLG_CShoes = new SFSObject();
+					isfsarrSDKLG_CShoes.PutInt("ID", heroSDKLG.ShoesId);
+					isfsarrSDKLG_CShoes.PutInt("CharacterID", 1);
+					isfsarrSDKLG_CShoes.PutInt("EquipID", heroSDKLG.ShoesId);
+					isfsarrSDKLG_CShoes.PutInt("Type", 4);
+					isfsarrSDKLG_CCE.AddSFSObject(isfsarrSDKLG_CShoes);
+					ISFSObject isfsarrSDKLG_CTire = new SFSObject();
+					isfsarrSDKLG_CTire.PutInt("ID", heroSDKLG.TireId);
+					isfsarrSDKLG_CTire.PutInt("CharacterID", 1);
+					isfsarrSDKLG_CTire.PutInt("EquipID", heroSDKLG.TireId);
+					isfsarrSDKLG_CTire.PutInt("Type", 2);
+					isfsarrSDKLG_CCE.AddSFSObject(isfsarrSDKLG_CTire);
+					isfsobjSDKLG_Ccha.PutSFSArray("CharacterEquip", isfsarrSDKLG_CCE);
+					ISFSArray isfsarrSDKLG_CCF = new SFSArray();
+					isfsobjSDKLG_Ccha.PutSFSArray("CharacterFuben", isfsarrSDKLG_CCF);
+					ISFSObject isfsobjSDKLG_Cgu = new SFSObject();
+					isfsobjSDKLG_Cgu.PutInt("ID", PlayerPrefs.GetInt("CGameUserID"));
+					ISFSObject isfsobjSDKLG_C = new SFSObject();
+					isfsobjSDKLG_C.PutSFSObject("cha", isfsobjSDKLG_Ccha);
+					isfsobjSDKLG_C.PutSFSObject("gu", isfsobjSDKLG_Cgu);
+					callback(true, isfsobjSDKLG_C);
 				}
 				else
 				{
-					ISFSObject isfsobject3_1 = new SFSObject();
-					callback(true, isfsobject3_1);
+					ISFSObject isfsobjSDKLG = new SFSObject();
+					callback(true, isfsobjSDKLG);
 				}
 				break;
 			case "ReadyBeginGame": // not well documented
@@ -387,6 +390,14 @@ public class SFSUtil
 				//param.GetInt("id"); // example: character id of the player chosen
 				callback(false, null);
 				break;
+			case "VerifySession": // Verify the Session. We are going to return local data
+				//param.GetUtfString("nm"); // dunno what this returns (this.user)
+				//param.GetUtfString("sid"); // dunno what this returns (this.sid)
+				//param.GetUtfString("sk"); // GameCache.ServerKey
+				ISFSObject isfsobjVerifySession = new SFSObject();
+				isfsobjVerifySession.PutUtfString("nm","LocalUser");
+				callback(true, isfsobjVerifySession);
+				break;
 			// undocumented
 			/*
 			case "SearchShopItem":
@@ -409,7 +420,6 @@ public class SFSUtil
 			case "SearchBlackList":
 			case "InviteJoinGameRoom":
 			case "InviteFriend":
-			case "VerifySession":
 			case "GetChaProperty":
 			case "KickoutGameRoom":
 			case "GetStarReward": // TODO, probably for fuben/campaign levels
