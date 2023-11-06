@@ -298,7 +298,6 @@ public class SFSUtil
 				string[] stars = {"star1", "star2", "star3"};
 				string[] starsget = {"star1get", "star2get", "star3get"};
 				int[] starconditions = {map.GetStarCondition01, map.GetStarCondition02, map.GetStarCondition03};
-				int[] starssaveddata = {characterFubenByMapId.Star1, characterFubenByMapId.Star2, characterFubenByMapId.Star3};
 				foreach (int s in istars)
 				{
 					RaidStarCondition raidStarCondition = GameCache.RaidStar[starconditions[s]];
@@ -316,6 +315,7 @@ public class SFSUtil
 					}
 					if (characterFubenByMapId != null)
 					{
+						int[] starssaveddata = {characterFubenByMapId.Star1, characterFubenByMapId.Star2, characterFubenByMapId.Star3};
 						if (starssaveddata[s] == 1)
 						{
 							sfsobject3_1.PutInt(starsget[s], 1);
@@ -400,13 +400,22 @@ public class SFSUtil
 				isfsobjVS.PutUtfString("nm","LocalUser");
 				callback(true, isfsobjVS);
 				break;
+			//case "SearchMailList":
+				//ISFSArray isfsarrSML = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
+				//ISFSObject isfsobjSML_Mail = new SFSObject();
+				//isfsobjSML_Mail.PutUtfString("SendReceiveName","系统奖励");
+				//isfsobjSML_Mail.PutUtfString("SendTime","2016-07-01")
+				//isfsobjSML_Mail.PutInt("Image",0)
+				//isfsarrSML.AddSFSObject(isfsobjSML_Mail);
+				//ISFSObject isfsobjSML = new SFSObject();
+				//isfsobjSML.PutSFSArray("cms", isfsarrSDKLG_CCE);
+				//break;
 			// undocumented
 			/*
 			case "SearchShopItem":
 			case "CheckShopItemInfo":
 			case "BuyShopItem":
 			case "ExtractAttachment":
-			case "SearchMailList":
 			case "SearchMailInfo":
 			case "ChangeGroup":
 			case "ModifyGameRoom":
