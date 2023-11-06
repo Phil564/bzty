@@ -118,9 +118,11 @@ public class SFSUtil
 				{
 					PlayerPrefs.SetInt("CFunc", param.GetInt("func")); // saving the func in case that the player leaves
 					PlayerPrefs.Save();
-					// GameCache.Character.Func = param.GetInt("func"); // setting the func
 				} 
-				callback(true, null);
+				if (callback != null)
+				{
+					callback(false, null);
+				}
 				break;
 			case "SetCharacter": // called by ChangeNameUI, probably to change a part of the character without literally fucking it up.
 			{
@@ -394,9 +396,9 @@ public class SFSUtil
 				//param.GetUtfString("nm"); // dunno what this returns (this.user)
 				//param.GetUtfString("sid"); // dunno what this returns (this.sid)
 				//param.GetUtfString("sk"); // GameCache.ServerKey
-				ISFSObject isfsobjVerifySession = new SFSObject();
-				isfsobjVerifySession.PutUtfString("nm","LocalUser");
-				callback(true, isfsobjVerifySession);
+				ISFSObject isfsobjVS = new SFSObject();
+				isfsobjVS.PutUtfString("nm","LocalUser");
+				callback(true, isfsobjVS);
 				break;
 			// undocumented
 			/*
