@@ -1,7 +1,10 @@
 build/
+tempconvert/
+baseapk.apk
+baseapk.7z
 _old/
 _dnSpy/
-tempconvert/
 baseapk.1.0.6.apk
 baseapk.1.0.6.7z
+baseapk-.apk
 dnSpy.lnk

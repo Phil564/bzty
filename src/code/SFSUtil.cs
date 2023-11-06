@@ -67,6 +67,7 @@ public class SFSUtil
 				isfsobjCC_cha.PutInt("UpStep", PlayerPrefs.GetInt("CUpStep")); // Rank Exp needed for the next level
 				isfsobjCC_cha.PutInt("Money", PlayerPrefs.GetInt("CMoney")); // Gems
 				isfsobjCC_cha.PutInt("GameGold", PlayerPrefs.GetInt("CGameGold")); // Coins/Gold
+				isfsobjCC_cha.PutInt("Func", 0); // i have to do this since the game is dumb
 				Hero heroCC;
 				if (PlayerPrefs.GetInt("CSex") == 1)
 				{
@@ -330,6 +331,7 @@ public class SFSUtil
 						sfsobject3_1.PutInt(starsget[s], 0);
 					}	
 				}
+				// ALRIGHT this shouldn't be necessary and the server wouldn't do that but the game seems to have some parts missing so????????
 				CharacterFuben characterFuben = new CharacterFuben();
 				characterFuben.ID = GameCache.RoomInfo.mapId;
 				characterFuben.CharacterID = 1;
@@ -400,23 +402,38 @@ public class SFSUtil
 				isfsobjVS.PutUtfString("nm","LocalUser");
 				callback(true, isfsobjVS);
 				break;
-			//case "SearchMailList":
-				//ISFSArray isfsarrSML = new SFSArray(); // TEMPORARY!!!! character fit, doesn't save, loaded on the fly
-				//ISFSObject isfsobjSML_Mail = new SFSObject();
-				//isfsobjSML_Mail.PutUtfString("SendReceiveName","系统奖励");
-				//isfsobjSML_Mail.PutUtfString("SendTime","2016-07-01")
-				//isfsobjSML_Mail.PutInt("Image",0)
-				//isfsarrSML.AddSFSObject(isfsobjSML_Mail);
-				//ISFSObject isfsobjSML = new SFSObject();
-				//isfsobjSML.PutSFSArray("cms", isfsarrSDKLG_CCE);
-				//break;
+			case "SearchMailList": // Called by MailListUI, returns the Mail List for the player
+				ISFSArray isfsarrSML = new SFSArray(); // PLACEHOLDER!!!! i ain't programming a whole mail system
+				ISFSObject isfsobjSML_Mail = new SFSObject();
+				isfsobjSML_Mail.PutUtfString("SendReceiveName","都市市长"); // data from https://youtu.be/QyCTp9fgC_U?t=461, bottom text
+				isfsobjSML_Mail.PutUtfString("SendTime","2016-07-01");
+				isfsobjSML_Mail.PutInt("Image",71016);
+				isfsobjSML_Mail.PutInt("ID",0); // cmid in SearchMailInfo
+				isfsarrSML.AddSFSObject(isfsobjSML_Mail);
+				ISFSObject isfsobjSML = new SFSObject();
+				isfsobjSML.PutSFSArray("cms", isfsarrSML);
+				callback(true, isfsobjSML);
+				break;
+			case "SearchMailInfo":
+				//param.GetUtfString("cmid"); // gets ID from a mail from SearchMailList (example: 0)
+				ISFSObject isfsobjSMI = new SFSObject(); // PLACEHOLDER!!!! i ain't programming a whole mail system
+				isfsobjSMI.PutUtfString("name","都市市长"); // data from https://youtu.be/QyCTp9fgC_U?t=461
+				isfsobjSMI.PutUtfString("title","新手奖励");
+				isfsobjSMI.PutUtfString("time","2016-07-01");
+				isfsobjSMI.PutUtfString("content","欢迎来到墨汁都市,我们给你准备了一件衣服,穿上 试试吧。");
+				isfsobjSMI.PutInt("allread",1); // needs to be 1 since 
+				isfsobjSMI.PutInt("moneynum",100); // needs to be 1 since 
+				isfsobjSMI.PutInt("goldnum",1000); // needs to be 1 since 
+				isfsobjSMI.PutInt("allread",1); // needs to be 1 since 
+				isfsobjSMI.PutInt("itemnum0",71016);
+				callback(true, isfsobjSMI);
+				break;
 			// undocumented
 			/*
 			case "SearchShopItem":
 			case "CheckShopItemInfo":
 			case "BuyShopItem":
 			case "ExtractAttachment":
-			case "SearchMailInfo":
 			case "ChangeGroup":
 			case "ModifyGameRoom":
 			case "DataForward":
