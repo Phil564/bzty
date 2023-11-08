@@ -33,6 +33,7 @@ public class SFSUtil
 	// Token: 0x06000999 RID: 2457 RVA: 0x00036738 File Offset: 0x00034938
 	public static void Send(string cmd, string source, ISFSObject param, Action<bool, ISFSObject> callback)
 	{
+		Debug.Log("SFSUtil.Send, cmd: " + cmd);
 		switch (cmd) 
 		{
 			case "CreateCharacter": // called by CreateCharacter, to well, create a character.
@@ -105,6 +106,36 @@ public class SFSUtil
 				isfsobjCC_cha.PutSFSArray("CharacterEquip", isfsarrCC_CE);
 				ISFSArray isfsarrCC_CF = new SFSArray(); // TEMPORARY!!!! story mode save data, doesn't save
 				isfsobjCC_cha.PutSFSArray("CharacterFuben", isfsarrCC_CF);
+				/*
+				ISFSArray isfsarrCC_CI = new SFSArray(); // TEMPORARY!!!! inventory save data, doesn't save
+				
+				ISFSObject isfsobjCC_IWeapon = new SFSObject();
+				isfsobjCC_IWeapon.PutInt("ID", heroCC.WeaponId);
+				isfsobjCC_IWeapon.PutInt("CharacterID", 1);
+				isfsobjCC_IWeapon.PutInt("EquipID", heroCC.WeaponId);
+				isfsobjCC_IWeapon.PutInt("Type", 1);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_IWeapon);
+				ISFSObject isfsobjCC_ICloth = new SFSObject();
+				isfsobjCC_ICloth.PutInt("ID", heroCC.ClothId);
+				isfsobjCC_ICloth.PutInt("CharacterID", 1);
+				isfsobjCC_ICloth.PutInt("EquipID", heroCC.ClothId);
+				isfsobjCC_ICloth.PutInt("Type", 3);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_ICloth);
+				ISFSObject isfsobjCC_IShoes = new SFSObject();
+				isfsobjCC_IShoes.PutInt("ID", heroCC.ShoesId);
+				isfsobjCC_IShoes.PutInt("CharacterID", 1);
+				isfsobjCC_IShoes.PutInt("EquipID", heroCC.ShoesId);
+				isfsobjCC_IShoes.PutInt("Type", 4);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_IShoes);
+				ISFSObject isfsobjCC_ITire = new SFSObject();
+				isfsobjCC_ITire.PutInt("ID", heroCC.TireId);
+				isfsobjCC_ITire.PutInt("CharacterID", 1);
+				isfsobjCC_ITire.PutInt("EquipID", heroCC.TireId);
+				isfsobjCC_ITire.PutInt("Type", 2);
+				isfsarrCC_CE.AddSFSObject(isfsobjCC_ITire);
+				
+				isfsobjCC_cha.PutSFSArray("CharacterItem", isfsarrCC_CI);
+				*/
 				ISFSObject isfsobjCC_gu = new SFSObject();
 				isfsobjCC_gu.PutInt("ID", PlayerPrefs.GetInt("CGameUserID"));
 				ISFSObject isfsobjCC_send = new SFSObject();
@@ -117,8 +148,25 @@ public class SFSUtil
 			case "SetCharacterFunc": // this is kind of how the game normally saves shit
 				if (param.ContainsKey("func"))
 				{
-					PlayerPrefs.SetInt("CFunc", param.GetInt("func")); // saving the func in case that the player leaves
-					PlayerPrefs.Save();
+					if (param.GetInt("func") == 68) // NASTY HACK!!! I DON'T WANT TO PROGRAM AN INVENTORY
+					{
+						PlayerPrefs.SetInt("CFunc", 3012);
+						PlayerPrefs.Save();
+						if (GameCache.Character != null)
+						{
+							GameCache.Character.Func = 3012;
+						}
+					}	
+					else
+					{
+						PlayerPrefs.SetInt("CFunc", param.GetInt("func")); // saving the func in case that the player leaves
+						PlayerPrefs.Save();
+						if (GameCache.Character != null)
+						{
+							GameCache.Character.Func = param.GetInt("func");
+						}
+					}
+					Debug.Log("SetCharacterFunc, Func: " + PlayerPrefs.GetInt("CFunc").ToString());
 				} 
 				if (callback != null)
 				{
@@ -214,26 +262,35 @@ public class SFSUtil
 					callback(true, isfsobjSDKLG);
 				}
 				break;
-			case "ReadyBeginGame": // not well documented
-				//param.GetUtfString("sc"); // empty
-				//param.GetUtfString("ck"); // empty
-				//param.GetInt("tp");
-				callback(false, null);
-				break;
-			case "DelMail": // deletes the mail off the server
-				//param.GetInt("cmid"); // character mail id
-				callback(true, null);
-				break;
 			case "Ping": // simulate server ping, referenced in ServerAPI
 				callback(true, null);
 				break;
 			case "JoinGameRoom": // gives a signal to the server when you join a Turf War gameroom
 				//param.GetUtfString("sc"); // empty
 				//param.GetUtfString("ck"); // empty
-				//param.GetInt("grid"); // returns grid or Game Room ID
-				callback(false, null); // callback is false since we do not want players getting softlocked in a room that doesn't exist
+				//param.GetInt("grid"); // returns grid or Game Room ID (0 for fastjoin or -1 for create)
+				/*switch(param.GetInt("grid"))
+					case 0:
+						break;
+					case -1:
+						break;
+					default:
+						break;*/
+				if (callback != null)
+				{
+					callback(true, null); // callback is false since we do not want players getting softlocked in a room that doesn't exist
+				}
 				//returns:
 				//sfsobject.PutInt("id"); // (????????)
+				break;
+			case "ReadyBeginGame": // not well documented
+				//param.GetUtfString("sc"); // empty
+				//param.GetUtfString("ck"); // empty
+				//param.GetInt("tp");
+				if (callback != null)
+				{
+					callback(true, null);
+				}
 				break;
 			case "SearchGameRoom": // supposed to return Turf War rooms, but because there aren't any Turf War rooms, the callback is false.
 				//param.GetUtfString("sc"); // empty
@@ -402,7 +459,7 @@ public class SFSUtil
 				isfsobjVS.PutUtfString("nm","LocalUser");
 				callback(true, isfsobjVS);
 				break;
-			case "SearchMailList": // Called by MailListUI, returns the Mail List for the player
+			case "SearchMailList": // NOT PROPERLY IMPLEMENTED!, Called by MailListUI, returns the Mail List for the player
 				ISFSArray isfsarrSML = new SFSArray(); // PLACEHOLDER!!!! i ain't programming a whole mail system
 				ISFSObject isfsobjSML_Mail = new SFSObject();
 				isfsobjSML_Mail.PutUtfString("SendReceiveName","都市市长"); // data from https://youtu.be/QyCTp9fgC_U?t=461, bottom text
@@ -414,7 +471,7 @@ public class SFSUtil
 				isfsobjSML.PutSFSArray("cms", isfsarrSML);
 				callback(true, isfsobjSML);
 				break;
-			case "SearchMailInfo":
+			case "SearchMailInfo": // NOT PROPERLY IMPLEMENTED!, Called by MailInfoUI, returns the Info for the Mail
 				//param.GetUtfString("cmid"); // gets ID from a mail from SearchMailList (example: 0)
 				ISFSObject isfsobjSMI = new SFSObject(); // PLACEHOLDER!!!! i ain't programming a whole mail system
 				isfsobjSMI.PutUtfString("name","都市市长"); // data from https://youtu.be/QyCTp9fgC_U?t=461
@@ -428,12 +485,26 @@ public class SFSUtil
 				isfsobjSMI.PutInt("itemnum0",71016);
 				callback(true, isfsobjSMI);
 				break;
+			case "ExtractAttachment": // NOT PROPERLY IMPLEMENTED!, Called by MailInfoUI, returns nothing. Used to tell the server to extract the attachment to the player's data
+				//param.GetUtfString("cmid"); // gets ID from a mail from SearchMailInfo (example: 0)
+				if (callback != null)
+				{
+					callback(true, null);
+				}
+				break;
+			case "DelMail": // NOT PROPERLY IMPLEMENTED!, Called by MailInfoUI, deletes the mail off the server
+				//param.GetInt("cmid"); // character mail id
+				callback(true, null);
+				break;
+			case "GetWeekRewardItem": // NOT PROPERLY IMPLEMENTED!, Called by MainScene, supposed to return the day. Used to tell the server to extract the attachment to the player's data
+				//isfsobj.PutInt("day",1);
+				callback(false, null); // FUCK YOU MY FELLA!
+				break;
 			// undocumented
 			/*
 			case "SearchShopItem":
 			case "CheckShopItemInfo":
 			case "BuyShopItem":
-			case "ExtractAttachment":
 			case "ChangeGroup":
 			case "ModifyGameRoom":
 			case "DataForward":
@@ -452,7 +523,6 @@ public class SFSUtil
 			case "KickoutGameRoom":
 			case "GetStarReward": // TODO, probably for fuben/campaign levels
 			case "PVPAddMoney":
-			case "GetWeekRewardItem":
 			case "SignIn":
 			case "GetReward":
 			case "PostException": // BUG REPORTS??? LMFAO
