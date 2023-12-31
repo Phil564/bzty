@@ -1,16 +1,16 @@
 @echo off
-del /q baseapk.1.0.6.apk
-"tools\7z.exe" x "baseapk.1.0.6.7z" -o%~dp0tmp_convert
-echo ^<Converter^>[92m Successfully extracted the 7z. [0m
-"tools\7z.exe" a -tzip "baseapk.1.0.6.apk" "%~dp0tmp_convert\*" -mx9 -aoa
-echo ^<Converter^>[92m Successfully converted the 7z file to an apk. [0m
+del /q baseapk.apk
+"tools\7z.exe" x "baseapk.7z" -o%~dp0tmp_convert
+echo ^<Converter^>[92m Successfully extracted the 7z archive. [0m
+"tools\7z.exe" a -tzip "baseapk.apk" "%~dp0tmp_convert\*" -mx9 -aoa
+echo ^<Converter^>[92m Successfully converted the 7z archive to an apk. [0m
 rd /s /q %~dp0tmp_convert
 echo ^<Converter^>[92m Successfully deleted the temporary directory. [0m
 echo ^<Converter^>[92m Checking if the converted apk is OK. [0m
-for /f "tokens=2 delims=: " %%a in ('tools\aapt.exe dump badging baseapk.1.0.6.apk ^| findstr "package"') do (
+for /f "tokens=2 delims=: " %%a in ('tools\aapt.exe dump badging baseapk.apk ^| findstr "package"') do (
 	set "PACKAGE_NAME=%%a"
 )
-for /f "tokens=4 delims=: " %%a in ('tools\aapt.exe dump badging baseapk.1.0.6.apk ^| findstr "package"') do (
+for /f "tokens=4 delims=: " %%a in ('tools\aapt.exe dump badging baseapk.apk ^| findstr "package"') do (
 	set "VERSION_NAME=%%a"
 )
 echo ^<Compiler^>[92m %PACKAGE_NAME% [0m

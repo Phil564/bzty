@@ -6,3 +6,4 @@ Sepia Go 1.0.6 modified to work without servers.
 2. rename the apk to `baseapk.apk`
 3. move the renamed apk to the repository
 4. run compile.bat
+5. you now have the funny patched apk!!! enjoy
