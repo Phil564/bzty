@@ -2,6 +2,9 @@
 Sepia Go 1.0.6 modified to work without servers.
 
 ## Compiling the APK on Windows
+
+(if you don't have java already, install it. it needs to be in your env path.)
+
 1. get an apk of Sepia Go 1.0.6
 2. rename the apk to `baseapk.apk`
 3. move the renamed apk to the repository
