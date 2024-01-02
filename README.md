@@ -12,3 +12,7 @@ Sepia Go 1.0.6 modified to work without servers.
 5. you now have the funny patched apk!!! enjoy
 
 You will also need to disable play protect on devices with a google account (since google really doesn't like resigned apk files)
+
+## Compiling the APK on Linux & other Unix based systems (termux!)
+
+Please look at [https://codeberg.org/Baempaieo/bzty-nix](https://codeberg.org/Baempaieo/bzty-nix).
